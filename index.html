@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="방문 목적에 맞춰 성균관대학교 서울캠퍼스 주변 카페와 층을 추천하는 KINGO SPOT 데모입니다."
+    />
+    <meta name="theme-color" content="#F6F3EC" />
+    <title>KINGO SPOT | 목적에 맞는 카페 공간 추천</title>
+    <script>
+      document.documentElement.dataset.initialView = location.hash === "#cafes" ? "cafes" : "intro";
+    </script>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <main class="app-shell" id="app-shell">
+      <!-- 첫 접속 시 이 시작 화면만 표시됩니다. -->
+      <section class="app-screen intro-screen" id="intro-screen" aria-labelledby="intro-title">
+        <div class="intro-background-glow" aria-hidden="true"></div>
+        <div class="intro-background-curve" aria-hidden="true"></div>
+
+        <div class="container intro-screen-inner">
+          <div class="brand intro-logo intro-sequence intro-sequence--logo" aria-label="KINGO SPOT">
+            <span class="brand-mark" aria-hidden="true">
+              <i></i><i></i><i></i>
+            </span>
+            <span class="brand-name">KINGO <strong>SPOT</strong></span>
+          </div>
+
+          <div class="intro-content">
+            <p class="intro-guide intro-sequence intro-sequence--guide">SKKU CAFE GUIDE</p>
+            <h1 class="intro-title intro-sequence intro-sequence--title" id="intro-title" tabindex="-1">
+              오늘, 어떤 자리를<br />찾고 있나요?
+            </h1>
+            <p class="intro-description intro-sequence intro-sequence--description">
+              방문 목적을 선택하면 성대 앞 7곳의 카페·스터디카페에서 지금 갈 만한 공간을 추천해 드려요.
+            </p>
+
+            <fieldset class="purpose-selector intro-sequence intro-sequence--purpose">
+              <legend>방문 목적을 선택해 주세요</legend>
+
+              <button class="purpose-button" type="button" data-purpose="study">
+                <span class="purpose-number" aria-hidden="true">01</span>
+                <span class="purpose-button-copy">
+                  <strong>공부·과제</strong>
+                  <small>조용함과 콘센트 중심</small>
+                </span>
+                <span class="purpose-arrow" aria-hidden="true">→</span>
+              </button>
+
+              <button class="purpose-button" type="button" data-purpose="team">
+                <span class="purpose-number" aria-hidden="true">02</span>
+                <span class="purpose-button-copy">
+                  <strong>팀플</strong>
+                  <small>함께 앉는 테이블 중심</small>
+                </span>
+                <span class="purpose-arrow" aria-hidden="true">→</span>
+              </button>
+
+              <button class="purpose-button" type="button" data-purpose="conversation">
+                <span class="purpose-number" aria-hidden="true">03</span>
+                <span class="purpose-button-copy">
+                  <strong>대화·휴식</strong>
+                  <small>커피·디저트와 편안한 좌석</small>
+                </span>
+                <span class="purpose-arrow" aria-hidden="true">→</span>
+              </button>
+            </fieldset>
+
+            <!-- 지금 학생들이 많이 보는 목적 섹션 -->
+            <div class="trending-purposes intro-sequence intro-sequence--trending" id="trending-section" style="display: none;">
+              <h2 class="trending-title">🔥 지금 학생들이 많이 보는</h2>
+              <div class="trending-buttons">
+                <!-- 동적으로 생성됨 -->
+              </div>
+            </div>
+
+            <p class="intro-demo-note intro-sequence intro-sequence--demo" role="note">
+              <span aria-hidden="true"></span>
+              주소와 가격은 확인된 정보이며, 혼잡도와 추천 점수는 현장 조사 전 데모 데이터입니다.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 시작 버튼을 누른 뒤에만 표시되는 독립적인 카페 목록 화면입니다. -->
+      <section class="app-screen cafes-screen" id="cafes-screen" aria-labelledby="cafes-title">
+        <header class="cafes-header">
+          <div class="container cafes-header-inner">
+            <button class="back-to-intro-button" id="back-to-intro-button" type="button">
+              <span aria-hidden="true">←</span>
+              <span>처음으로</span>
+            </button>
+
+            <div class="brand cafes-brand" aria-label="KINGO SPOT">
+              <span class="brand-mark" aria-hidden="true">
+                <i></i><i></i><i></i>
+              </span>
+              <span class="brand-name">KINGO <strong>SPOT</strong></span>
+            </div>
+          </div>
+        </header>
+
+        <div class="cafes-overview">
+          <div class="container cafes-overview-inner">
+            <div>
+              <p class="section-kicker">PURPOSE MATCH</p>
+              <h1 id="cafes-title" tabindex="-1">목적에 맞는 공간</h1>
+              <p class="cafes-overview-description" id="cafes-overview-description">
+                혼잡도와 공간 조건을 함께 비교해 보세요.
+              </p>
+            </div>
+            <p class="result-count" id="result-count" aria-live="polite"></p>
+          </div>
+
+          <div class="container recommendation-summary" id="recommendation-summary" aria-live="polite"></div>
+
+          <div class="container cafes-status-note" role="note">
+            <span class="recent-status">
+              <i aria-hidden="true"></i>
+              최근 확인 정보
+            </span>
+            <span class="meta-divider" aria-hidden="true"></span>
+            <span class="demo-label">DEMO</span>
+            <span>실제 현장 조사 전 데이터</span>
+          </div>
+        </div>
+
+        <section class="cafe-section cafes-list-section" aria-label="카페 목록">
+          <div class="container purpose-toolbar">
+            <div class="purpose-toolbar-heading">
+              <span>추천 기준</span>
+              <strong id="selected-purpose-label">공부·과제</strong>
+            </div>
+            <div class="purpose-switch" aria-label="방문 목적 변경">
+              <button class="purpose-change-button" type="button" data-purpose="study" aria-pressed="true">
+                공부·과제
+              </button>
+              <button class="purpose-change-button" type="button" data-purpose="team" aria-pressed="false">
+                팀플
+              </button>
+              <button class="purpose-change-button" type="button" data-purpose="conversation" aria-pressed="false">
+                대화·휴식
+              </button>
+            </div>
+          </div>
+
+          <div class="filter-sticky">
+            <div class="container">
+              <div class="filter-bar" aria-label="혼잡도 필터">
+                <button class="filter-button active" type="button" data-filter="전체" aria-pressed="true">
+                  전체
+                </button>
+                <button class="filter-button" type="button" data-filter="여유" aria-pressed="false">
+                  <span class="filter-dot status-available" aria-hidden="true"></span>여유
+                </button>
+                <button class="filter-button" type="button" data-filter="보통" aria-pressed="false">
+                  <span class="filter-dot status-normal" aria-hidden="true"></span>보통
+                </button>
+                <button class="filter-button" type="button" data-filter="혼잡" aria-pressed="false">
+                  <span class="filter-dot status-crowded" aria-hidden="true"></span>혼잡
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="container">
+            <!-- 카페 카드는 script.js의 데이터로 이 영역에 자동 생성됩니다. -->
+            <div class="cafe-grid" id="cafe-grid"></div>
+
+            <p class="data-note">
+              주소와 스터디카페 가격은 온라인 확인된 정보입니다. 현재 혼잡도와 추천 점수, 소음·좌석 예시는
+              화면 구성을 위한 데모 데이터이며 실제 현장 조사 결과가 아닙니다.
+            </p>
+          </div>
+        </section>
+
+        <footer class="site-footer">
+          <div class="container footer-inner">
+            <p class="footer-brand">KINGO <span>SPOT</span></p>
+            <p>성균관대 학생을 위한 카페 큐레이션</p>
+          </div>
+        </footer>
+      </section>
+    </main>
+
+    <!-- 모바일에서는 bottom sheet, PC에서는 중앙 모달로 표시됩니다. -->
+    <div class="detail-layer" id="detail-layer" hidden>
+      <div class="detail-backdrop" data-dialog-close aria-hidden="true"></div>
+
+      <section
+        class="detail-panel"
+        id="detail-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="detail-title"
+        aria-describedby="detail-description"
+        tabindex="-1"
+      >
+        <div class="sheet-drag-zone" id="sheet-drag-zone" aria-hidden="true">
+          <span class="sheet-handle"></span>
+        </div>
+
+        <div class="detail-scroll-area">
+          <header class="detail-header">
+            <div>
+              <p class="detail-kicker">KINGO SPOT DETAIL</p>
+              <span class="detail-demo-label">데모 상세 정보</span>
+            </div>
+            <button class="dialog-close-button" id="dialog-close-button" type="button" aria-label="상세 패널 닫기">
+              <span aria-hidden="true">×</span>
+            </button>
+          </header>
+
+          <div class="detail-visual" aria-hidden="true">
+            <span id="detail-cafe-number">SPOT 01</span>
+            <i></i>
+          </div>
+
+          <div class="detail-title-row">
+            <h2 id="detail-title"></h2>
+            <span class="status-badge" id="detail-status"></span>
+          </div>
+          <p class="detail-checked-time" id="detail-checked-time"></p>
+          <p class="detail-description" id="detail-description"></p>
+
+          <dl class="detail-fact-list">
+            <div>
+              <dt>주소</dt>
+              <dd id="detail-address"></dd>
+            </div>
+          </dl>
+
+          <div class="detail-action-buttons" id="detail-action-buttons" aria-label="지도 및 주소 액션">
+            <button class="detail-action-button" type="button" data-map-provider="naver">
+              네이버 지도에서 보기
+            </button>
+            <button class="detail-action-button" type="button" data-map-provider="kakao">
+              카카오맵에서 보기
+            </button>
+            <button class="detail-action-button detail-action-button--copy" type="button" data-copy-address="true">
+              주소 복사
+            </button>
+          </div>
+
+          <!-- 가격 영역은 스터디카페를 열었을 때만 JavaScript로 표시됩니다. -->
+          <section
+            class="detail-info-section detail-price-section"
+            id="detail-price-section"
+            aria-labelledby="price-heading"
+            hidden
+          >
+            <div class="detail-section-heading">
+              <h3 id="price-heading">이용 가격</h3>
+              <span>온라인 확인 · 변동 가능</span>
+            </div>
+            <div class="detail-price-list" id="detail-price-list"></div>
+            <p class="detail-price-note" id="detail-price-note"></p>
+          </section>
+
+          <div class="detail-purpose-summary" id="detail-purpose-summary"></div>
+
+          <section class="detail-info-section" aria-labelledby="tag-heading">
+            <div class="detail-section-heading">
+              <h3 id="tag-heading">카페 분위기 태그</h3>
+              <span>현장 조사 전</span>
+            </div>
+            <div class="atmosphere-tags" id="detail-tags"></div>
+          </section>
+
+          <section class="detail-info-section" aria-labelledby="floor-heading">
+            <div class="detail-section-heading">
+              <h3 id="floor-heading">층별 공간 정보</h3>
+              <span class="floor-demo-label">일부 데모 정보</span>
+            </div>
+            <div class="floor-list" id="detail-floor-list"></div>
+          </section>
+
+          <div class="detail-update-note" role="note">
+            <span aria-hidden="true">i</span>
+            <p>
+              층 구성과 별도로 알려주신 정보는 반영했습니다. 그 밖의 혼잡도·소음·좌석 예시와 추천 결과는
+              <strong>현장 조사 후 업데이트 예정</strong>입니다.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 필요한 안내가 있을 때 script.js의 showToast 함수로 표시합니다. -->
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+  </body>
+</html>
